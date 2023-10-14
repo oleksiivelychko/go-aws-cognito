@@ -20,7 +20,7 @@ func TestConfig(t *testing.T) {
 		t.Error("got empty AWS_SECRET_ACCESS_KEY")
 	}
 
-	if config.Endpoint != "" && config.Endpoint != "http://localhost:9229" {
+	if config.Endpoint != "" && config.Endpoint != LocalEndpoint {
 		t.Errorf("got invalid ENDPOINT %s", config.Endpoint)
 	}
 }
