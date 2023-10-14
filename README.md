@@ -44,6 +44,30 @@ go run main.go sign-up --config=config.yaml -u=EMAIL -p=PASSWORD --clientID=ID
 ```
 ---
 
+- confirm sign up via AWS CLI
+```
+aws cognito-idp confirm-sign-up --client-id ID \
+    --username EMAIL --confirmation-code CODE \
+    --endpoint-url=http://localhost:9229 --profile localstack
+```
+- confirm sign up via CLI
+```
+go run main.go confirm-sign-up --config=config.yaml -u=EMAIL --code=CODE --clientID=ID
+```
+---
+
+- sign in via AWS CLI
+```
+aws cognito-idp initiate-auth --client-id ID \
+    --auth-parameters USERNAME=EMAIL,PASSWORD=PASSWORD --auth-flow USER_PASSWORD_AUTH \
+    --endpoint-url=http://localhost:9229 --profile localstack
+```
+- sign in via CLI
+```
+go run main.go sign-in --config=config.yaml -u=EMAIL -p=PASSWORD --clientID=ID
+```
+---
+
 ---
 ※ References:
 - [cognito-idp](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cognito-idp/index.html)
