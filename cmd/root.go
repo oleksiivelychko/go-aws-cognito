@@ -11,7 +11,6 @@ var cfgFile string
 var cfgAWS *config.AWS
 
 var rootCmd = &cobra.Command{
-	Use:   "go-aws-cognito",
 	Short: "Cognito user pools API allows set up user pools and app clients, and authenticate users.",
 }
 
