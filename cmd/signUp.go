@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/oleksiivelychko/go-aws-cognito/config"
 	"github.com/oleksiivelychko/go-aws-cognito/service"
 	"github.com/spf13/cobra"
 )
@@ -15,14 +16,17 @@ var signUpCmd = &cobra.Command{
 			cobra.CheckErr(err)
 		}
 
-		err = srv.SignUp(
-			cmd.Flag("username").Value.String(),
-			cmd.Flag("password").Value.String(),
-			cmd.Flag("clientID").Value.String(),
-		)
+		username := cmd.Flag("username").Value.String()
+		clientID := cmd.Flag("clientID").Value.String()
 
+		err = srv.SignUp(username, cmd.Flag("password").Value.String(), clientID)
 		if err != nil {
-			fmt.Println(err)
+			cobra.CheckErr(err)
+		}
+
+		if cfgAWS.Endpoint == config.LocalEndpoint {
+			code := parseLocalConfirmationCode(clientID, username)
+			fmt.Printf("✅ Operation has been successful! Confirmation code is %s\n", code)
 		} else {
 			fmt.Println("✅ Operation has been successful!")
 		}
@@ -39,4 +43,14 @@ func init() {
 	_ = signUpCmd.MarkFlagRequired("clientID")
 
 	rootCmd.AddCommand(signUpCmd)
+}
+
+func parseLocalConfirmationCode(clientID, username string) string {
+	client, err := config.ParseClientByID(clientID, config.LocalData)
+	if err != nil {
+		cobra.CheckErr(err)
+	}
+
+	code, _ := config.ParseConfirmationCode(username, config.LocalData+client.UserPoolId+".json")
+	return code
 }
