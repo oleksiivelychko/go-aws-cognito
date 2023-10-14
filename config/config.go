@@ -5,6 +5,11 @@ import (
 	"os"
 )
 
+const (
+	LocalEndpoint = "http://localhost:9229"
+	LocalData     = "./data/db/"
+)
+
 type AWS struct {
 	Region             string `yaml:"REGION"`
 	AwsAccessKeyId     string `yaml:"AWS_ACCESS_KEY_ID"`
