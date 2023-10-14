@@ -19,7 +19,7 @@ var deleteUserCmd = &cobra.Command{
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			fmt.Println("✅ Operation has been successful!")
+			fmt.Println(SuccessfulMessage)
 		}
 	},
 }

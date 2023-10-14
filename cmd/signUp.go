@@ -26,9 +26,9 @@ var signUpCmd = &cobra.Command{
 
 		if cfgAWS.Endpoint == config.LocalEndpoint {
 			code := parseLocalConfirmationCode(clientID, username)
-			fmt.Printf("✅ Operation has been successful! Confirmation code is %s\n", code)
+			fmt.Printf("%s Confirmation code is %s\n", SuccessfulMessage, code)
 		} else {
-			fmt.Println("✅ Operation has been successful!")
+			fmt.Println(SuccessfulMessage)
 		}
 	},
 }

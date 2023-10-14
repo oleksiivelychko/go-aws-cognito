@@ -99,7 +99,6 @@ aws cognito-idp delete-user-pool --user-pool-id ID --endpoint-url=http://localho
 ```
 go run main.go delete-pool --config=config.yaml --poolID=ID
 ```
----
 
 ---
 ※ References:
