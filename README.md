@@ -22,6 +22,17 @@ go run main.go --config=config.yaml describe-pool --poolID=ID
 ```
 ---
 
+- create user pool client via AWS CLI
+```
+aws cognito-idp create-user-pool-client --user-pool-id ID --client-name "My client" \
+    --endpoint-url=http://localhost:9229 --profile localstack
+```
+- create user pool client via CLI
+```
+go run main.go --config=config.yaml create-pool-client --poolID=ID --name="My client"
+```
+---
+
 ---
 ※ References:
 - [cognito-idp](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cognito-idp/index.html)
