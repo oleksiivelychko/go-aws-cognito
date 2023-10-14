@@ -9,7 +9,7 @@ import (
 
 const clientsJSON = "clients.json"
 
-type client struct {
+type Client struct {
 	ClientId           string    `json:"ClientId"`
 	ClientName         string    `json:"ClientName"`
 	CreationDate       time.Time `json:"CreationDate"`
@@ -37,7 +37,7 @@ type user struct {
 	}
 }
 
-func ParsePoolID(poolName string, storagePath string) (string, error) {
+func ParsePoolIDByName(poolName string, storagePath string) (string, error) {
 	files, readDirErr := os.ReadDir(storagePath)
 	if readDirErr != nil {
 		return "", readDirErr
@@ -67,22 +67,19 @@ func ParsePoolID(poolName string, storagePath string) (string, error) {
 	return "", fmt.Errorf("unable to parse pool ID by name %s", poolName)
 }
 
-func ParseClientID(clientName string, storagePath string) (string, error) {
-	storagePathClientsJSON := storagePath + "/" + clientsJSON
+func ParseClientByID(clientID string, storagePath string) (*Client, error) {
+	storagePathClientsJSON := storagePath + clientsJSON
 
 	byteArr, err := os.ReadFile(storagePathClientsJSON)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	var unmarshalled struct{ Clients interface{} }
 	err = json.Unmarshal(byteArr, &unmarshalled)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-
-	var clients []*client
-	clientsUnmarshalledMap := unmarshalled.Clients.(map[string]interface{})
 
 	for _, unmarshalledValue := range unmarshalled.Clients.(map[string]interface{}) {
 		clientJSON, marshallErr := json.Marshal(unmarshalledValue)
@@ -90,30 +87,18 @@ func ParseClientID(clientName string, storagePath string) (string, error) {
 			continue
 		}
 
-		unmarshalledClient := &client{}
-		err = json.Unmarshal(clientJSON, unmarshalledClient)
+		client := &Client{}
+		err = json.Unmarshal(clientJSON, client)
 		if err != nil {
 			continue
 		}
 
-		clients = append(clients, unmarshalledClient)
-	}
-
-	if len(clients) == 0 && len(clientsUnmarshalledMap) > 0 {
-		return "", fmt.Errorf("unable to parse clients from %s", storagePathClientsJSON)
-	}
-
-	if err != nil {
-		return "", err
-	}
-
-	for _, clientMarshalled := range clients {
-		if clientMarshalled.ClientName == clientName {
-			return clientMarshalled.ClientId, nil
+		if client.ClientId == clientID {
+			return client, nil
 		}
 	}
 
-	return "", fmt.Errorf("unable to parse client ID by name %s", clientName)
+	return nil, fmt.Errorf("unable to parse client by ID %s", clientID)
 }
 
 func ParseConfirmationCode(username string, storagePath string) (string, error) {
