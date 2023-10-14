@@ -9,27 +9,17 @@ import (
 
 const clientsJSON = "clients.json"
 
-type clients struct {
-	Clients interface{}
-}
-
 type client struct {
 	ClientId           string    `json:"ClientId"`
 	ClientName         string    `json:"ClientName"`
 	CreationDate       time.Time `json:"CreationDate"`
 	LastModifiedDate   time.Time `json:"LastModifiedDate"`
 	UserPoolId         string    `json:"UserPoolId"`
-	TokenValidityUnits tokenValidityUnits
-}
-
-type tokenValidityUnits struct {
-	AccessToken  string `json:"AccessToken"`
-	IdToken      string `json:"TokenID"`
-	RefreshToken string `json:"RefreshToken"`
-}
-
-type users struct {
-	Users interface{}
+	TokenValidityUnits struct {
+		AccessToken  string `json:"AccessToken"`
+		IdToken      string `json:"TokenID"`
+		RefreshToken string `json:"RefreshToken"`
+	}
 }
 
 type user struct {
@@ -41,12 +31,40 @@ type user struct {
 	Username             string   `json:"Username"`
 	UserStatus           string   `json:"UserStatus"`
 	ConfirmationCode     string   `json:"ConfirmationCode"`
-	Attributes           []attributes
+	Attributes           []struct {
+		Name  string `json:"Name"`
+		Value string `json:"Value"`
+	}
 }
 
-type attributes struct {
-	Name  string `json:"Name"`
-	Value string `json:"Value"`
+func ParsePoolID(poolName string, storagePath string) (string, error) {
+	files, readDirErr := os.ReadDir(storagePath)
+	if readDirErr != nil {
+		return "", readDirErr
+	}
+
+	for _, f := range files {
+		if f.Name() == clientsJSON {
+			continue
+		}
+
+		byteArr, err := os.ReadFile(storagePath + "/" + f.Name())
+		if err != nil {
+			return "", err
+		}
+
+		var optionsUnmarshalled struct{ Options interface{} }
+		err = json.Unmarshal(byteArr, &optionsUnmarshalled)
+		if err != nil {
+			return "", err
+		}
+
+		if optionsUnmarshalled.Options.(map[string]interface{})["Name"] == poolName {
+			return fmt.Sprintf("%v", optionsUnmarshalled.Options.(map[string]interface{})["Id"]), nil
+		}
+	}
+
+	return "", fmt.Errorf("unable to parse pool ID by name %s", poolName)
 }
 
 func ParseClientID(clientName string, storagePath string) (string, error) {
@@ -57,7 +75,7 @@ func ParseClientID(clientName string, storagePath string) (string, error) {
 		return "", err
 	}
 
-	var clientsUnmarshalled clients
+	var clientsUnmarshalled struct{ Clients interface{} }
 	err = json.Unmarshal(byteArr, &clientsUnmarshalled)
 	if err != nil {
 		return "", err
@@ -66,7 +84,7 @@ func ParseClientID(clientName string, storagePath string) (string, error) {
 	var clientsMarshalled []*client
 	clientsUnmarshalledMap := clientsUnmarshalled.Clients.(map[string]interface{})
 
-	for _, clientUnmarshalledValue := range clientsUnmarshalledMap {
+	for _, clientUnmarshalledValue := range clientsUnmarshalled.Clients.(map[string]interface{}) {
 		clientJSON, marshallErr := json.Marshal(clientUnmarshalledValue)
 		if marshallErr != nil {
 			continue
@@ -134,7 +152,7 @@ func parseUsersJSON(storagePath string) ([]*user, error) {
 		return nil, err
 	}
 
-	var usersUnmarshalled users
+	var usersUnmarshalled struct{ Users interface{} }
 	err = json.Unmarshal(byteArr, &usersUnmarshalled)
 	if err != nil {
 		return nil, err
