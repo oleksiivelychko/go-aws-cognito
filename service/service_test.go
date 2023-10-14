@@ -30,19 +30,22 @@ func init() {
 }
 
 func TestCognito_CreatePool(t *testing.T) {
+	var err error
 	poolName := "My pool"
 
-	output, err := srv.CreatePool(poolName)
+	poolID, err = srv.CreatePool(poolName)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	poolID, err = config.ParsePoolID(poolName, "./../data/db")
+	parsedPoolID, err := config.ParsePoolID(poolName, "./../data/db")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	t.Log(output)
+	if poolID != parsedPoolID {
+		t.Fatalf("poolID %s doesn't match with the parsed one %s", poolID, parsedPoolID)
+	}
 }
 
 func TestCognito_DescribePool(t *testing.T) {
