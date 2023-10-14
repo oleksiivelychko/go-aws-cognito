@@ -68,6 +68,18 @@ go run main.go sign-in --config=config.yaml -u=EMAIL -p=PASSWORD --clientID=ID
 ```
 ---
 
+- delete user via AWS CLI
+```
+aws cognito-idp delete-user --access-token TOKEN --endpoint-url=http://localhost:9229 --profile localstack
+```
+- delete user via CLI
+```
+token=$(cat access-token.txt 2>/dev/null)
+go run main.go delete-user --config=config.yaml --token=$token
+rm access-token.txt
+```
+---
+
 ---
 ※ References:
 - [cognito-idp](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cognito-idp/index.html)
