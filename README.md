@@ -91,6 +91,16 @@ go run main.go delete-pool-client --config=config.yaml --poolID=ID --clientID=ID
 ```
 ---
 
+- delete user pool via AWS CLI
+```
+aws cognito-idp delete-user-pool --user-pool-id ID --endpoint-url=http://localhost:9229 --profile localstack
+```
+- delete user pool via CLI
+```
+go run main.go delete-pool --config=config.yaml --poolID=ID
+```
+---
+
 ---
 ※ References:
 - [cognito-idp](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cognito-idp/index.html)
