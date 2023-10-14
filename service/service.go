@@ -14,7 +14,7 @@ type IService interface {
 	ConfirmSignUp(username, confirmationCode, poolClientID string) error
 	DeleteUser(accessToken string) error
 	CreatePool(name string) (string, error)
-	CreatePoolClient(name, poolID string) (*cognitoidentityprovider.CreateUserPoolClientOutput, error)
+	CreatePoolClient(name, poolID string) (string, error)
 	DescribePool(poolID string) (string, error)
 	DeletePool(poolID string) error
 	DeletePoolClient(poolID, clientID string) error
@@ -110,8 +110,8 @@ func (service *service) CreatePool(name string) (string, error) {
 	return *output.UserPool.Id, nil
 }
 
-func (service *service) CreatePoolClient(name, poolID string) (*cognitoidentityprovider.CreateUserPoolClientOutput, error) {
-	return service.client.CreateUserPoolClient(&cognitoidentityprovider.CreateUserPoolClientInput{
+func (service *service) CreatePoolClient(name, poolID string) (string, error) {
+	output, err := service.client.CreateUserPoolClient(&cognitoidentityprovider.CreateUserPoolClientInput{
 		ClientName: aws.String(name),
 		UserPoolId: aws.String(poolID),
 		TokenValidityUnits: &cognitoidentityprovider.TokenValidityUnitsType{
@@ -123,6 +123,12 @@ func (service *service) CreatePoolClient(name, poolID string) (*cognitoidentityp
 		IdTokenValidity:      aws.Int64(60),
 		RefreshTokenValidity: aws.Int64(7),
 	})
+
+	if err != nil {
+		return "", err
+	}
+
+	return *output.UserPoolClient.ClientId, nil
 }
 
 func (service *service) DeletePool(poolID string) error {
