@@ -2,7 +2,6 @@ package cognito
 
 import (
 	"github.com/oleksiivelychko/go-aws-cognito/config"
-	"github.com/oleksiivelychko/go-aws-cognito/localdata"
 	"log"
 	"strings"
 	"testing"
@@ -54,7 +53,7 @@ func TestCognito_CreatePoolClient(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	poolClientID, err = localdata.ParseClientID(clientName, "./../data/db")
+	poolClientID, err = config.ParseClientID(clientName, "./../data/db")
 	if err != nil {
 		t.Fatalf("unable to detect client ID: %s", err)
 	}
@@ -85,7 +84,7 @@ func TestCognito_SameSignUp(t *testing.T) {
 func TestCognito_ConfirmSignUp(t *testing.T) {
 	pathPoolID := "./../data/db/" + poolID + ".json"
 
-	signupConfirmationCode, err := localdata.ParseConfirmationCode(username, pathPoolID)
+	signupConfirmationCode, err := config.ParseConfirmationCode(username, pathPoolID)
 	if signupConfirmationCode == "" {
 		t.Fatal(err)
 	}
@@ -95,7 +94,7 @@ func TestCognito_ConfirmSignUp(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	userStatus, err := localdata.ParseUserStatus(username, pathPoolID)
+	userStatus, err := config.ParseUserStatus(username, pathPoolID)
 	if err != nil {
 		t.Fatal(err)
 	}
