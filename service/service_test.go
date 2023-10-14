@@ -7,8 +7,11 @@ import (
 	"testing"
 )
 
-const username = "test@test.test"
-const password = "secret"
+const (
+	username  = "test@test.test"
+	password  = "secret"
+	localData = "./." + config.LocalData
+)
 
 var (
 	poolID       string
@@ -31,14 +34,14 @@ func init() {
 
 func TestCognito_CreatePool(t *testing.T) {
 	var err error
-	poolName := "My pool"
+	poolName := "test pool"
 
 	poolID, err = srv.CreatePool(poolName)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	parsedPoolID, err := config.ParsePoolID(poolName, "./../data/db")
+	parsedPoolID, err := config.ParsePoolIDByName(poolName, localData)
 	if err != nil {
 		t.Errorf("unable to parse pool ID: %s", err)
 	}
@@ -57,20 +60,20 @@ func TestCognito_DescribePool(t *testing.T) {
 
 func TestCognito_CreatePoolClient(t *testing.T) {
 	var err error
-	clientName := "My service"
+	clientName := "test client"
 
 	poolClientID, err = srv.CreatePoolClient(clientName, poolID)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	parsedPoolClientID, err := config.ParseClientID(clientName, "./../data/db")
+	client, err := config.ParseClientByID(poolClientID, localData)
 	if err != nil {
 		t.Errorf("unable to parse pool client ID: %s", err)
 	}
 
-	if poolClientID != parsedPoolClientID {
-		t.Errorf("poolClientID %s doesn't match with the parsed one %s", poolClientID, parsedPoolClientID)
+	if poolClientID != client.ClientId {
+		t.Errorf("poolClientID %s doesn't match with the parsed one %s", poolClientID, client.ClientId)
 	}
 }
 
@@ -93,7 +96,7 @@ func TestCognito_SameSignUp(t *testing.T) {
 }
 
 func TestCognito_ConfirmSignUp(t *testing.T) {
-	pathPoolID := "./../data/db/" + poolID + ".json"
+	pathPoolID := localData + poolID + ".json"
 
 	signupConfirmationCode, err := config.ParseConfirmationCode(username, pathPoolID)
 	if signupConfirmationCode == "" {
@@ -116,12 +119,11 @@ func TestCognito_ConfirmSignUp(t *testing.T) {
 }
 
 func TestCognito_SignIn(t *testing.T) {
-	result, err := srv.SignIn(username, password, poolClientID)
+	var err error
+	accessToken, err = srv.SignIn(username, password, poolClientID)
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	accessToken = *result.AccessToken
 }
 
 func TestCognito_DeleteUser(t *testing.T) {
