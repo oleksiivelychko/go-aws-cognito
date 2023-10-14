@@ -9,7 +9,7 @@ import (
 )
 
 type IService interface {
-	SignIn(username, password, poolClientID string) (*cognitoidentityprovider.AuthenticationResultType, error)
+	SignIn(username, password, poolClientID string) (string, error)
 	SignUp(username, password, poolClientID string) error
 	ConfirmSignUp(username, confirmationCode, poolClientID string) error
 	DeleteUser(accessToken string) error
@@ -65,7 +65,7 @@ func (service *service) ConfirmSignUp(username, confirmationCode, poolClientID s
 	return err
 }
 
-func (service *service) SignIn(username, password, poolClientID string) (*cognitoidentityprovider.AuthenticationResultType, error) {
+func (service *service) SignIn(username, password, poolClientID string) (string, error) {
 	output, err := service.client.InitiateAuth(&cognitoidentityprovider.InitiateAuthInput{
 		AuthFlow: aws.String("USER_PASSWORD_AUTH"),
 		AuthParameters: aws.StringMap(map[string]string{
@@ -76,10 +76,10 @@ func (service *service) SignIn(username, password, poolClientID string) (*cognit
 	})
 
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return output.AuthenticationResult, nil
+	return *output.AuthenticationResult.AccessToken, nil
 }
 
 func (service *service) DeleteUser(accessToken string) error {
