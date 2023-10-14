@@ -75,20 +75,20 @@ func TestCognito_CreatePoolClient(t *testing.T) {
 }
 
 func TestCognito_SignUp(t *testing.T) {
-	_, err := srv.SignUp(username, password, poolClientID)
+	err := srv.SignUp(username, password, poolClientID)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func TestCognito_SameSignUp(t *testing.T) {
-	_, err := srv.SignUp(username, password, poolClientID)
+	err := srv.SignUp(username, password, poolClientID)
 	if err == nil {
 		t.Fatal("account must exist")
 	}
 
 	if !strings.HasPrefix(err.Error(), "UsernameExistsException") {
-		t.Errorf("should have been an UsernameExistsException, got %s", err.Error())
+		t.Errorf("expected UsernameExistsException, got %s", err.Error())
 	}
 }
 

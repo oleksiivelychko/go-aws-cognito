@@ -10,7 +10,7 @@ import (
 
 type IService interface {
 	SignIn(username, password, poolClientID string) (*cognitoidentityprovider.AuthenticationResultType, error)
-	SignUp(username, password, poolClientID string) (*cognitoidentityprovider.SignUpOutput, error)
+	SignUp(username, password, poolClientID string) error
 	ConfirmSignUp(username, confirmationCode, poolClientID string) error
 	DeleteUser(accessToken string) error
 	CreatePool(name string) (string, error)
@@ -39,8 +39,8 @@ func New(config *config.AWS) (IService, error) {
 	return &service{client: cognitoidentityprovider.New(awsSession)}, nil
 }
 
-func (service *service) SignUp(username, password, poolClientID string) (*cognitoidentityprovider.SignUpOutput, error) {
-	return service.client.SignUp(&cognitoidentityprovider.SignUpInput{
+func (service *service) SignUp(username, password, poolClientID string) error {
+	_, err := service.client.SignUp(&cognitoidentityprovider.SignUpInput{
 		Username: aws.String(username),
 		Password: aws.String(password),
 		ClientId: aws.String(poolClientID),
@@ -51,6 +51,8 @@ func (service *service) SignUp(username, password, poolClientID string) (*cognit
 			},
 		},
 	})
+
+	return err
 }
 
 func (service *service) ConfirmSignUp(username, confirmationCode, poolClientID string) error {
