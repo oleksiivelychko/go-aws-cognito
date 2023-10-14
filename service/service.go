@@ -103,7 +103,11 @@ func (service *service) CreatePool(name string) (string, error) {
 		},
 	})
 
-	return output.String(), err
+	if err != nil {
+		return "", err
+	}
+
+	return *output.UserPool.Id, nil
 }
 
 func (service *service) CreatePoolClient(name, poolID string) (*cognitoidentityprovider.CreateUserPoolClientOutput, error) {
