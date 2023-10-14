@@ -2,6 +2,7 @@ package cognito
 
 import (
 	"github.com/oleksiivelychko/go-aws-cognito/config"
+	"github.com/oleksiivelychko/go-aws-cognito/localdata"
 	"log"
 	"strings"
 	"testing"
@@ -46,12 +47,21 @@ func TestCognito_DescribePool(t *testing.T) {
 }
 
 func TestCognito_CreatePoolClient(t *testing.T) {
-	output, err := srv.CreatePoolClient("My service", poolID)
+	clientName := "My service"
+
+	_, err := srv.CreatePoolClient(clientName, poolID)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	poolClientID = *output.UserPoolClient.ClientId
+	poolClientID, err = localdata.ParseClientID(clientName, "./../data/db")
+	if err != nil {
+		t.Fatalf("unable to detect client ID: %s", err)
+	}
+
+	if poolClientID == "" {
+		t.Fatal("got empty client ID")
+	}
 }
 
 func TestCognito_SignUp(t *testing.T) {
@@ -75,7 +85,7 @@ func TestCognito_SameSignUp(t *testing.T) {
 func TestCognito_ConfirmSignUp(t *testing.T) {
 	pathPoolID := "./../data/db/" + poolID + ".json"
 
-	signupConfirmationCode, err := config.ParseConfirmationCode(username, pathPoolID)
+	signupConfirmationCode, err := localdata.ParseConfirmationCode(username, pathPoolID)
 	if signupConfirmationCode == "" {
 		t.Fatal(err)
 	}
@@ -85,7 +95,7 @@ func TestCognito_ConfirmSignUp(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	userStatus, err := config.ParseUserStatus(username, pathPoolID)
+	userStatus, err := localdata.ParseUserStatus(username, pathPoolID)
 	if err != nil {
 		t.Fatal(err)
 	}
