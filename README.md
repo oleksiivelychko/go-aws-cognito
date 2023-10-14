@@ -82,7 +82,7 @@ rm access-token.txt
 
 - delete user pool client via AWS CLI
 ```
-aws cognito-idp delete-user-pool-client --user-pool-id POOL_ID --client-id ID \
+aws cognito-idp delete-user-pool-client --user-pool-id ID --client-id ID \
     --endpoint-url=http://localhost:9229 --profile localstack
 ```
 - delete user pool client via CLI
