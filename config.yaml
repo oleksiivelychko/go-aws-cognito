@@ -1,0 +1,4 @@
+REGION: us-east-1
+AWS_ACCESS_KEY_ID: local
+AWS_SECRET_ACCESS_KEY: local
+ENDPOINT: http://localhost:9229
