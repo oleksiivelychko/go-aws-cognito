@@ -53,14 +53,14 @@ func ParsePoolID(poolName string, storagePath string) (string, error) {
 			return "", err
 		}
 
-		var optionsUnmarshalled struct{ Options interface{} }
-		err = json.Unmarshal(byteArr, &optionsUnmarshalled)
+		var unmarshalled struct{ Options interface{} }
+		err = json.Unmarshal(byteArr, &unmarshalled)
 		if err != nil {
 			return "", err
 		}
 
-		if optionsUnmarshalled.Options.(map[string]interface{})["Name"] == poolName {
-			return fmt.Sprintf("%v", optionsUnmarshalled.Options.(map[string]interface{})["Id"]), nil
+		if unmarshalled.Options.(map[string]interface{})["Name"] == poolName {
+			return fmt.Sprintf("%v", unmarshalled.Options.(map[string]interface{})["Id"]), nil
 		}
 	}
 
@@ -75,31 +75,31 @@ func ParseClientID(clientName string, storagePath string) (string, error) {
 		return "", err
 	}
 
-	var clientsUnmarshalled struct{ Clients interface{} }
-	err = json.Unmarshal(byteArr, &clientsUnmarshalled)
+	var unmarshalled struct{ Clients interface{} }
+	err = json.Unmarshal(byteArr, &unmarshalled)
 	if err != nil {
 		return "", err
 	}
 
-	var clientsMarshalled []*client
-	clientsUnmarshalledMap := clientsUnmarshalled.Clients.(map[string]interface{})
+	var clients []*client
+	clientsUnmarshalledMap := unmarshalled.Clients.(map[string]interface{})
 
-	for _, clientUnmarshalledValue := range clientsUnmarshalled.Clients.(map[string]interface{}) {
-		clientJSON, marshallErr := json.Marshal(clientUnmarshalledValue)
+	for _, unmarshalledValue := range unmarshalled.Clients.(map[string]interface{}) {
+		clientJSON, marshallErr := json.Marshal(unmarshalledValue)
 		if marshallErr != nil {
 			continue
 		}
 
-		clientUnmarshalled := &client{}
-		err = json.Unmarshal(clientJSON, clientUnmarshalled)
+		unmarshalledClient := &client{}
+		err = json.Unmarshal(clientJSON, unmarshalledClient)
 		if err != nil {
 			continue
 		}
 
-		clientsMarshalled = append(clientsMarshalled, clientUnmarshalled)
+		clients = append(clients, unmarshalledClient)
 	}
 
-	if len(clientsMarshalled) == 0 && len(clientsUnmarshalledMap) > 0 {
+	if len(clients) == 0 && len(clientsUnmarshalledMap) > 0 {
 		return "", fmt.Errorf("unable to parse clients from %s", storagePathClientsJSON)
 	}
 
@@ -107,7 +107,7 @@ func ParseClientID(clientName string, storagePath string) (string, error) {
 		return "", err
 	}
 
-	for _, clientMarshalled := range clientsMarshalled {
+	for _, clientMarshalled := range clients {
 		if clientMarshalled.ClientName == clientName {
 			return clientMarshalled.ClientId, nil
 		}
@@ -117,12 +117,12 @@ func ParseClientID(clientName string, storagePath string) (string, error) {
 }
 
 func ParseConfirmationCode(username string, storagePath string) (string, error) {
-	usersParsed, err := parseUsersJSON(storagePath)
+	users, err := parseUsersJSON(storagePath)
 	if err != nil {
 		return "", err
 	}
 
-	for _, userParsed := range usersParsed {
+	for _, userParsed := range users {
 		if userParsed.Username == username {
 			return userParsed.ConfirmationCode, nil
 		}
@@ -132,12 +132,12 @@ func ParseConfirmationCode(username string, storagePath string) (string, error) 
 }
 
 func ParseUserStatus(username string, storagePath string) (string, error) {
-	usersParsed, err := parseUsersJSON(storagePath)
+	users, err := parseUsersJSON(storagePath)
 	if err != nil {
 		return "", err
 	}
 
-	for _, userParsed := range usersParsed {
+	for _, userParsed := range users {
 		if userParsed.Username == username {
 			return userParsed.UserStatus, nil
 		}
@@ -152,17 +152,17 @@ func parseUsersJSON(storagePath string) ([]*user, error) {
 		return nil, err
 	}
 
-	var usersUnmarshalled struct{ Users interface{} }
-	err = json.Unmarshal(byteArr, &usersUnmarshalled)
+	var unmarshalled struct{ Users interface{} }
+	err = json.Unmarshal(byteArr, &unmarshalled)
 	if err != nil {
 		return nil, err
 	}
 
-	var usersParsed []*user
-	usersUnmarshalledMap := usersUnmarshalled.Users.(map[string]interface{})
+	var users []*user
+	usersUnmarshalledMap := unmarshalled.Users.(map[string]interface{})
 
-	for _, userUnmarshalledValue := range usersUnmarshalledMap {
-		userJSON, marshallErr := json.Marshal(userUnmarshalledValue)
+	for _, unmarshalledValue := range usersUnmarshalledMap {
+		userJSON, marshallErr := json.Marshal(unmarshalledValue)
 		if marshallErr != nil {
 			continue
 		}
@@ -173,12 +173,12 @@ func parseUsersJSON(storagePath string) ([]*user, error) {
 			continue
 		}
 
-		usersParsed = append(usersParsed, userUnmarshalled)
+		users = append(users, userUnmarshalled)
 	}
 
-	if len(usersParsed) == 0 && len(usersUnmarshalledMap) > 0 {
+	if len(users) == 0 && len(usersUnmarshalledMap) > 0 {
 		return nil, fmt.Errorf("unable to parse users from %s", storagePath)
 	}
 
-	return usersParsed, nil
+	return users, nil
 }
