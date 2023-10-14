@@ -13,7 +13,7 @@ type IService interface {
 	SignUp(username, password, poolClientID string) (*cognitoidentityprovider.SignUpOutput, error)
 	ConfirmSignUp(username, confirmationCode, poolClientID string) error
 	DeleteUser(accessToken string) error
-	CreatePool(name string) (*cognitoidentityprovider.CreateUserPoolOutput, error)
+	CreatePool(name string) (string, error)
 	CreatePoolClient(name, poolID string) (*cognitoidentityprovider.CreateUserPoolClientOutput, error)
 	DescribePool(poolID string) (string, error)
 	DeletePool(poolID string) error
@@ -88,8 +88,8 @@ func (service *service) DeleteUser(accessToken string) error {
 	return err
 }
 
-func (service *service) CreatePool(name string) (*cognitoidentityprovider.CreateUserPoolOutput, error) {
-	return service.client.CreateUserPool(&cognitoidentityprovider.CreateUserPoolInput{
+func (service *service) CreatePool(name string) (string, error) {
+	output, err := service.client.CreateUserPool(&cognitoidentityprovider.CreateUserPoolInput{
 		PoolName: aws.String(name),
 		Policies: &cognitoidentityprovider.UserPoolPolicyType{
 			PasswordPolicy: &cognitoidentityprovider.PasswordPolicyType{
@@ -102,6 +102,8 @@ func (service *service) CreatePool(name string) (*cognitoidentityprovider.Create
 			},
 		},
 	})
+
+	return output.String(), err
 }
 
 func (service *service) CreatePoolClient(name, poolID string) (*cognitoidentityprovider.CreateUserPoolClientOutput, error) {
