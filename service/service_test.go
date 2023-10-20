@@ -32,7 +32,7 @@ func init() {
 	}
 }
 
-func TestCognito_CreatePool(t *testing.T) {
+func TestCreatePool(t *testing.T) {
 	var err error
 	poolName := "test pool"
 
@@ -51,14 +51,14 @@ func TestCognito_CreatePool(t *testing.T) {
 	}
 }
 
-func TestCognito_DescribePool(t *testing.T) {
+func TestDescribePool(t *testing.T) {
 	_, err := cognito.DescribePool(poolID)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
-func TestCognito_CreatePoolClient(t *testing.T) {
+func TestCreatePoolClient(t *testing.T) {
 	var err error
 	clientName := "test client"
 
@@ -77,14 +77,14 @@ func TestCognito_CreatePoolClient(t *testing.T) {
 	}
 }
 
-func TestCognito_SignUp(t *testing.T) {
+func TestSignUp(t *testing.T) {
 	err := cognito.SignUp(username, password, poolClientID)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
-func TestCognito_SameSignUp(t *testing.T) {
+func TestSameSignUp(t *testing.T) {
 	err := cognito.SignUp(username, password, poolClientID)
 	if err == nil {
 		t.Fatal("account must exist")
@@ -95,7 +95,7 @@ func TestCognito_SameSignUp(t *testing.T) {
 	}
 }
 
-func TestCognito_ConfirmSignUp(t *testing.T) {
+func TestConfirmSignUp(t *testing.T) {
 	pathPoolID := localData + poolID + ".json"
 
 	signupConfirmationCode, err := config.ParseConfirmationCode(username, pathPoolID)
@@ -118,29 +118,29 @@ func TestCognito_ConfirmSignUp(t *testing.T) {
 	}
 }
 
-func TestCognito_SignIn(t *testing.T) {
+func TestSignIn(t *testing.T) {
 	var err error
 	accessToken, err = cognito.SignIn(username, password, poolClientID)
 	if err != nil {
-		t.Fatal(err)
+		t.Error(err)
 	}
 }
 
-func TestCognito_DeleteUser(t *testing.T) {
+func TestDeleteUser(t *testing.T) {
 	err := cognito.DeleteUser(accessToken)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
-func TestCognito_DeletePoolClient(t *testing.T) {
+func TestDeletePoolClient(t *testing.T) {
 	err := cognito.DeletePoolClient(poolID, poolClientID)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
-func TestCognito_DeletePool(t *testing.T) {
+func TestDeletePool(t *testing.T) {
 	err := cognito.DeletePool(poolID)
 	if err != nil {
 		t.Error(err)
