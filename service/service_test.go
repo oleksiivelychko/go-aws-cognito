@@ -1,4 +1,4 @@
-package cognito
+package service
 
 import (
 	"github.com/oleksiivelychko/go-aws-cognito/config"

@@ -10,12 +10,12 @@ var cognitoDeletePoolCmd = &cobra.Command{
 	Use:   "delete-pool",
 	Short: "Deletes the user pool.",
 	Run: func(cmd *cobra.Command, args []string) {
-		srv, err := cognito.New(cfgAWS)
+		cognito, err := service.New(cfgAWS)
 		if err != nil {
 			cobra.CheckErr(err)
 		}
 
-		err = srv.DeletePool(cmd.Flag("poolID").Value.String())
+		err = cognito.DeletePool(cmd.Flag("poolID").Value.String())
 		if err != nil {
 			fmt.Println(err)
 		} else {

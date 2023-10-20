@@ -10,12 +10,12 @@ var createPoolClientCmd = &cobra.Command{
 	Use:   "create-pool-client",
 	Short: "Creates a user pool client",
 	Run: func(cmd *cobra.Command, args []string) {
-		srv, err := cognito.New(cfgAWS)
+		cognito, err := service.New(cfgAWS)
 		if err != nil {
 			cobra.CheckErr(err)
 		}
 
-		clientID, err := srv.CreatePoolClient(
+		clientID, err := cognito.CreatePoolClient(
 			cmd.Flag("name").Value.String(),
 			cmd.Flag("poolID").Value.String(),
 		)

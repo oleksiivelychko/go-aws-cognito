@@ -10,12 +10,12 @@ var confirmSignUpCmd = &cobra.Command{
 	Use:   "confirm-sign-up",
 	Short: "Confirms registration of a new user.",
 	Run: func(cmd *cobra.Command, args []string) {
-		srv, err := cognito.New(cfgAWS)
+		cognito, err := service.New(cfgAWS)
 		if err != nil {
 			cobra.CheckErr(err)
 		}
 
-		err = srv.ConfirmSignUp(
+		err = cognito.ConfirmSignUp(
 			cmd.Flag("username").Value.String(),
 			cmd.Flag("code").Value.String(),
 			cmd.Flag("clientID").Value.String(),

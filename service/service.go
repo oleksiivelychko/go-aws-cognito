@@ -1,4 +1,4 @@
-package cognito
+package service
 
 import (
 	"github.com/aws/aws-sdk-go/aws"

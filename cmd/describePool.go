@@ -10,12 +10,12 @@ var describePoolCmd = &cobra.Command{
 	Use:   "describe-pool",
 	Short: "Returns a configuration information and metadata of the user pool.",
 	Run: func(cmd *cobra.Command, args []string) {
-		srv, err := cognito.New(cfgAWS)
+		cognito, err := service.New(cfgAWS)
 		if err != nil {
 			cobra.CheckErr(err)
 		}
 
-		output, err := srv.DescribePool(cmd.Flag("poolID").Value.String())
+		output, err := cognito.DescribePool(cmd.Flag("poolID").Value.String())
 		if err != nil {
 			fmt.Println(err)
 		} else {

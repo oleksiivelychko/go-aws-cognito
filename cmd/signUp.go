@@ -11,7 +11,7 @@ var signUpCmd = &cobra.Command{
 	Use:   "sign-up",
 	Short: "Registers a new user in the user pool.",
 	Run: func(cmd *cobra.Command, args []string) {
-		srv, err := cognito.New(cfgAWS)
+		cognito, err := service.New(cfgAWS)
 		if err != nil {
 			cobra.CheckErr(err)
 		}
@@ -19,7 +19,7 @@ var signUpCmd = &cobra.Command{
 		username := cmd.Flag("username").Value.String()
 		clientID := cmd.Flag("clientID").Value.String()
 
-		err = srv.SignUp(username, cmd.Flag("password").Value.String(), clientID)
+		err = cognito.SignUp(username, cmd.Flag("password").Value.String(), clientID)
 		if err != nil {
 			cobra.CheckErr(err)
 		}
