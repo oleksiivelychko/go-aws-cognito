@@ -11,7 +11,7 @@ var signUpCmd = &cobra.Command{
 	Use:   "sign-up",
 	Short: "Registers a new user in the user pool.",
 	Run: func(cmd *cobra.Command, args []string) {
-		cognito, err := service.New(cfgAWS)
+		cognito, err := service.New(configAWS)
 		if err != nil {
 			cobra.CheckErr(err)
 		}
@@ -24,7 +24,7 @@ var signUpCmd = &cobra.Command{
 			cobra.CheckErr(err)
 		}
 
-		if cfgAWS.Endpoint == config.LocalEndpoint {
+		if configAWS.Endpoint == config.LocalEndpoint {
 			code := parseLocalConfirmationCode(clientID, username)
 			fmt.Printf("%s Confirmation code is %s\n", SuccessfulMessage, code)
 		} else {

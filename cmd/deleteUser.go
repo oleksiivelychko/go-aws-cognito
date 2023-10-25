@@ -10,7 +10,7 @@ var deleteUserCmd = &cobra.Command{
 	Use:   "delete-user",
 	Short: "Allows user to delete himself or herself.",
 	Run: func(cmd *cobra.Command, args []string) {
-		cognito, err := service.New(cfgAWS)
+		cognito, err := service.New(configAWS)
 		if err != nil {
 			cobra.CheckErr(err)
 		}

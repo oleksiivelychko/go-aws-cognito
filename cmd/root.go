@@ -10,8 +10,8 @@ import (
 const SuccessfulMessage = "✅ Operation has been successful!"
 
 var (
-	cfgFile string
-	cfgAWS  *config.AWS
+	yamlConfig string
+	configAWS  *config.AWS
 )
 
 var rootCmd = &cobra.Command{
@@ -27,11 +27,11 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "config.yaml", "config YAML file")
+	rootCmd.PersistentFlags().StringVar(&yamlConfig, "config", "config.yaml", "config YAML file")
 }
 
 func initConfig() {
-	viper.SetConfigFile(cfgFile)
+	viper.SetConfigFile(yamlConfig)
 	viper.AutomaticEnv()
 
 	err := viper.ReadInConfig()
@@ -39,7 +39,7 @@ func initConfig() {
 		cobra.CheckErr(err)
 	}
 
-	cfgAWS = &config.AWS{
+	configAWS = &config.AWS{
 		Region:             viper.Get("REGION").(string),
 		AwsAccessKeyId:     viper.Get("AWS_ACCESS_KEY_ID").(string),
 		AwsSecretAccessKey: viper.Get("AWS_SECRET_ACCESS_KEY").(string),

@@ -11,7 +11,7 @@ var signInCmd = &cobra.Command{
 	Use:   "sign-in",
 	Short: "Initiates sign-in for user in the Cognito user directory.",
 	Run: func(cmd *cobra.Command, args []string) {
-		cognito, err := service.New(cfgAWS)
+		cognito, err := service.New(configAWS)
 		if err != nil {
 			cobra.CheckErr(err)
 		}

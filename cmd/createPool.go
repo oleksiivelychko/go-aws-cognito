@@ -10,7 +10,7 @@ var createPoolCmd = &cobra.Command{
 	Use:   "create-pool",
 	Short: "Creates a user pool.",
 	Run: func(cmd *cobra.Command, args []string) {
-		cognito, err := service.New(cfgAWS)
+		cognito, err := service.New(configAWS)
 		if err != nil {
 			cobra.CheckErr(err)
 		}
