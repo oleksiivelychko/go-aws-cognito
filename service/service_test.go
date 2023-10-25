@@ -14,19 +14,19 @@ const (
 )
 
 var (
-	poolID       string
-	poolClientID string
-	accessToken  string
-	cognito      IService
+	poolID         string
+	poolClientID   string
+	accessToken    string
+	cognitoService IService
 )
 
 func init() {
-	cfg, err := config.ReadYAML("./../config.yaml")
+	yamlConfig, err := config.ReadYAML("./../config.yaml")
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
 
-	cognito, err = New(cfg)
+	cognitoService, err = New(yamlConfig)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
@@ -36,7 +36,7 @@ func TestCreatePool(t *testing.T) {
 	var err error
 	poolName := "test pool"
 
-	poolID, err = cognito.CreatePool(poolName)
+	poolID, err = cognitoService.CreatePool(poolName)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -52,7 +52,7 @@ func TestCreatePool(t *testing.T) {
 }
 
 func TestDescribePool(t *testing.T) {
-	_, err := cognito.DescribePool(poolID)
+	_, err := cognitoService.DescribePool(poolID)
 	if err != nil {
 		t.Error(err)
 	}
@@ -62,7 +62,7 @@ func TestCreatePoolClient(t *testing.T) {
 	var err error
 	clientName := "test client"
 
-	poolClientID, err = cognito.CreatePoolClient(clientName, poolID)
+	poolClientID, err = cognitoService.CreatePoolClient(clientName, poolID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -78,14 +78,14 @@ func TestCreatePoolClient(t *testing.T) {
 }
 
 func TestSignUp(t *testing.T) {
-	err := cognito.SignUp(username, password, poolClientID)
+	err := cognitoService.SignUp(username, password, poolClientID)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func TestSameSignUp(t *testing.T) {
-	err := cognito.SignUp(username, password, poolClientID)
+	err := cognitoService.SignUp(username, password, poolClientID)
 	if err == nil {
 		t.Fatal("account must exist")
 	}
@@ -103,7 +103,7 @@ func TestConfirmSignUp(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = cognito.ConfirmSignUp(username, signupConfirmationCode, poolClientID)
+	err = cognitoService.ConfirmSignUp(username, signupConfirmationCode, poolClientID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -120,28 +120,28 @@ func TestConfirmSignUp(t *testing.T) {
 
 func TestSignIn(t *testing.T) {
 	var err error
-	accessToken, err = cognito.SignIn(username, password, poolClientID)
+	accessToken, err = cognitoService.SignIn(username, password, poolClientID)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func TestDeleteUser(t *testing.T) {
-	err := cognito.DeleteUser(accessToken)
+	err := cognitoService.DeleteUser(accessToken)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func TestDeletePoolClient(t *testing.T) {
-	err := cognito.DeletePoolClient(poolID, poolClientID)
+	err := cognitoService.DeletePoolClient(poolID, poolClientID)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func TestDeletePool(t *testing.T) {
-	err := cognito.DeletePool(poolID)
+	err := cognitoService.DeletePool(poolID)
 	if err != nil {
 		t.Error(err)
 	}
